@@ -16,8 +16,6 @@ export default function Home() {
 	};
 
 	async function askToGpt() {
-		console.log(promptValue);
-
 		const messages = [
 			{
 				role: "system",
@@ -54,17 +52,38 @@ export default function Home() {
 			const { value, done } = await reader.read();
 
 			if (done) {
+				setResponse((prev) => prev.concat(" <br/><br/>"));
+				console.log("");
+				console.log("");
+				console.log("");
+				console.log("");
 				break;
 			}
 
-			try {
-				const chunk = decoder.decode(value);
-				console.log(chunk)
-				const json = JSON.parse(chunk.replace("data: ", ""));
-				setResponse(prev => prev.concat(json.choices[0].delta.content))
-			} catch (err) {
-				console.log(err);
-			}
+			const chunk = await decoder.decode(value);
+			console.log(chunk);
+			console.log(
+				chunk.split("\n").map((line) => line.replace("data: ", ""))
+			);
+
+			const data = chunk
+				.split("\n")
+				// .filter(Boolean)
+				.map((line) => line.replace("data: ", ""));
+			console.log(data);
+			console.log("");
+			console.log("");
+
+			data.forEach((line) => {
+				try {
+					const json = JSON.parse(line);
+					console.log("json: ", json);
+					const token = json.choices[0]?.delta?.content;
+					token && setResponse((prev) => prev.concat(token));
+				} catch (err) {
+					console.log(err);
+				}
+			});
 
 			// setResponse(prev => prev.concat(chunk))
 		}
@@ -124,7 +143,7 @@ export default function Home() {
 
 					<Button onClick={askToGpt}>Ask</Button>
 
-					{response}
+					<p dangerouslySetInnerHTML={{ __html: response }} />
 				</Container>
 			</ion-content>
 		</>
