@@ -1,6 +1,5 @@
 import { useState } from "react";
 import styled from "styled-components";
-import IonSearchbar from "../components/IonSearchbar";
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 const API_URL = "https://api.openai.com/v1/chat/completions";
