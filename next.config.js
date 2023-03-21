@@ -1,6 +1,19 @@
 const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
-module.exports = {
+const withPWA = require('next-pwa')
+const runtimeCaching = require('next-pwa/cache');
+
+module.exports = withPWA({
+  
+  pwa: {
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development',
+    // runtimeCaching
+  },
+    
+
   webpack: (config) => {
     config.plugins.push(
       new CopyPlugin({
@@ -17,4 +30,4 @@ module.exports = {
     )
     return config
   },
-}
+})
