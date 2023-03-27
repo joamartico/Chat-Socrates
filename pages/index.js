@@ -88,6 +88,7 @@ export default function Home() {
 	);
 }
 
+
 const Container = styled.div`
 	margin: auto;
 	/* margin-top: 100px; */
