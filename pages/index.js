@@ -10,8 +10,10 @@ export default function Home() {
 
 	const handleChange = (event) => {
 		setPromptValue(event.target.value);
-		event.target.style.height = "auto";
-		event.target.style.height = event.target.scrollHeight + "px";
+		if (event.target.scrollHeight > 50) {
+			event.target.style.height = "auto";
+			event.target.style.height = event.target.scrollHeight + "px";
+		}
 	};
 
 	async function askToGpt() {
@@ -129,11 +131,10 @@ const Message = styled.div`
 	background: ${(props) => (props.role == "user" ? "#cef" : "#ddd")};
 `;
 
-
-const TextArea = styled.input`
+const TextArea = styled.textarea`
 	width: 100%;
-	min-height: fit-content;
-	/* height: ; */
+	min-height: 50px !important;
+	height: 50px;
 	padding: 10px;
 	font-size: 16px;
 	border: none;
@@ -144,7 +145,6 @@ const TextArea = styled.input`
 		outline: none;
 	}
 	margin-bottom: 15px;
-	margin-top: auto;
 `;
 
 const Button = styled.button`
