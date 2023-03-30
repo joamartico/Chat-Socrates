@@ -7,6 +7,7 @@ const API_URL = "https://api.openai.com/v1/chat/completions";
 export default function Home() {
 	const [promptValue, setPromptValue] = useState("");
 	const [messages, setMessages] = useState([]);
+	const [isTyping, setIsTyping] = useState(false);
 
 	const handleChange = (event) => {
 		setPromptValue(event.target.value);
@@ -18,11 +19,12 @@ export default function Home() {
 
 	async function askToGpt() {
 		setPromptValue("");
+		setIsTyping(true);
 		const newMessages = [
 			{
 				role: "system",
 				content:
-					"You are socrates. Do not give answers, make the user find the answer to his question by asking him deeper questions.",
+					"You are socrates, a philosopher bot. Do not give answers, make the user find the answer to his question by asking him deeper questions.",
 			},
 			...messages,
 			{ role: "user", content: promptValue },
@@ -45,8 +47,8 @@ export default function Home() {
 		});
 
 		const data = await response.json();
-		console.log(data);
 		const newMessages2 = [...newMessages, data.choices[0].message];
+		setIsTyping(false);
 		setMessages(newMessages2);
 	}
 
@@ -54,7 +56,7 @@ export default function Home() {
 		<>
 			<ion-content fullscreen>
 				<Container>
-					<GradientTitle>Talk with Sócrates</GradientTitle>
+					<GradientTitle>Chat Socrates</GradientTitle>
 
 					<Scroll>
 						{messages?.map(
@@ -66,9 +68,14 @@ export default function Home() {
 									</Message>
 								)
 						)}
+						{isTyping && (
+							<Message role="assistant" typing>
+								...
+							</Message>
+						)}
 					</Scroll>
 
-					<form
+					<Form
 						onSubmit={(e) => {
 							e.preventDefault();
 							askToGpt();
@@ -80,21 +87,20 @@ export default function Home() {
 							placeholder="Type something..."
 						/>
 
-						<Button>Ask</Button>
-					</form>
+						<Button>
+							<ion-icon size={30} name="paper-plane" />
+						</Button>
+					</Form>
 				</Container>
 			</ion-content>
 		</>
 	);
 }
-
-
 const Container = styled.div`
 	margin: auto;
 	/* margin-top: 100px; */
 	width: 90vw;
 	max-width: 700px;
-	/* height: 65%; */
 	height: 100%;
 	display: flex;
 	/* justify-content: center; */
@@ -105,10 +111,10 @@ const Container = styled.div`
 
 const Scroll = styled.div`
 	height: 100%;
-	max-height: 95vh;
+	max-height: 100%;
 	width: 100%;
 	overflow-y: scroll;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 `;
 
 const GradientTitle = styled.h1`
@@ -124,45 +130,63 @@ const GradientTitle = styled.h1`
 `;
 
 const Message = styled.div`
-	width: 100%;
+	/* width: 100%; */
+	max-width: 80%;
+	width: fit-content;
 	background: #cef;
-	border-radius: 4px;
-	padding: 5px 10px;
-	margin-bottom: 15px;
+	border-radius: 10px;
+	padding: 5px 15px;
+	margin: ${(props) => (props.role == "user" ? "0 0 0 auto" : "0 auto 0 0")};
+	margin-bottom: 20px;
 	background: ${(props) => (props.role == "user" ? "#cef" : "#ddd")};
+	color: ${(props) => (props.typing ? "#999" : "")};
+`;
+
+const Form = styled.form`
+	width: 100%;
+	display: flex;
+	padding: 10px;
+	margin-bottom: 16%;
+	height: 50px;
+	/* bottom: 0; */
+	/* position: fixed; */
 `;
 
 const TextArea = styled.textarea`
 	width: 100%;
 	min-height: 50px !important;
-	height: 50px;
+	height: 50px !important;
 	padding: 10px;
 	font-size: 16px;
 	border: none;
-	border-radius: 6px;
+	border-radius: 10px;
 	background-color: #f2f2f2;
 	resize: none;
 	&:focus {
 		outline: none;
 	}
-	margin-bottom: 15px;
+	margin-right: 10px;
 `;
 
 const Button = styled.button`
 	background-color: #0072ff;
-	width: 100%;
+	/* width: 100%; */
+	width: 50px;
+	height: 50px;
 	color: #fff;
-	padding: 16px 24px;
 	border: none;
-	border-radius: 6px;
+	border-radius: 10px;
 	font-size: 16px;
 	font-weight: bold;
 	cursor: pointer;
 	&:active {
 		background-color: #00c6ff;
 	}
-	font-size: 16px;
-	font-weight: bold;
-	font-family: "Montserrat", "Open Sans", sans-serif;
-	margin-bottom: 30px;
+	/* font-weight: bold; */
+	/* font-family: "Montserrat", "Open Sans", sans-serif; */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	background: linear-gradient(to right, #00c6ff, #0072ff);
 `;
